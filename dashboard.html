@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body { font-family: Arial; background: #f4f8fb; }
+.card {
+    padding: 20px;
+    background: white;
+    margin: 10px;
+    display: inline-block;
+}
+</style>
+</head>
+<body>
+
+<h2>⚡ Dashboard</h2>
+
+<div class="card">
+    <h3>Total Incidents</h3>
+    <p>{{ total }}</p>
+</div>
+
+<div class="card">
+    <h3>Most Affected Zone</h3>
+    <p>{{ top_zone[0] if top_zone else "N/A" }}</p>
+</div>
+
+<h3>Add Incident</h3>
+<form method="POST" action="/add">
+    <select name="zone">
+        <option>Central Business District</option>
+        <option>West Coast Zone</option>
+        <option>East Coast Zone</option>
+        <option>Northern Zone</option>
+        <option>Southern Zone</option>
+        <option>Industrial Zone</option>
+        <option>Residential Uplands</option>
+        <option>Rural Fringe Zone</option>
+    </select>
+    <input type="number" name="duration" placeholder="Duration (hrs)">
+    <input type="text" name="cause" placeholder="Cause">
+    <button type="submit">Add</button>
+</form>
+
+<canvas id="chart"></canvas>
+
+<script>
+fetch('/api/chart')
+.then(res => res.json())
+.then(data => {
+    new Chart(document.getElementById('chart'), {
+        type: 'bar',
+        data: {
+            labels: data.zones,
+            datasets: [{
+                label: 'Outages per Zone',
+                data: data.counts
+            }]
+        }
+    });
+});
+</script>
+
+</body>
+</html>
